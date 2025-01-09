@@ -1,0 +1,22 @@
+.logo{
+    width: 5rem;
+}
+
+.btn-logo{
+    border: none;
+    background: none;
+}
+
+.bien {
+    border: solid green 2px !important;
+}
+
+.mal {
+    border: solid red 2px !important;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
