@@ -25,7 +25,7 @@ public class CategoriasDAO implements ICategoriasDAO{
         try {
             conexion = ConnectionFactory.getConnection();
             sql = "SELECT DISTINCT c.* FROM categorias as c\n" +
-                    "JOIN abatech.productos p on c.idCategoria = p.idCategoria";
+                    "JOIN abatech.productos p on c.idCategoria = p.idCategoria ORDER BY c.nombre ASC";
             preparada = conexion.prepareStatement(sql);
             resultado = preparada.executeQuery();
             categorias = new ArrayList<>();

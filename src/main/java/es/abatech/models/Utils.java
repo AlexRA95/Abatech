@@ -27,4 +27,8 @@ public class Utils {
         }
 
     }
+
+    public static boolean contrasIguales(String contraActu, String contraNueva) {
+        return contraActu.equals(md5(contraNueva));
+    }
 }

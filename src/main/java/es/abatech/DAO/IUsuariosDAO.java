@@ -14,5 +14,7 @@ public interface IUsuariosDAO {
 
     public void updateUsuarioGen(Usuario usuario);
 
+    public void updateUsuarioContra(Usuario usuario);
+
     public void closeConnection();
 }

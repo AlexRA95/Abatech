@@ -13,6 +13,24 @@ import java.util.logging.Logger;
 public class UsuariosDAO implements IUsuariosDAO {
 
     @Override
+    public void updateUsuarioContra(Usuario usuario) {
+        Connection conexion = null;
+        PreparedStatement preparada = null;
+        String sql = "UPDATE usuarios SET Password = ? WHERE IdUsuario = ?";
+        try {
+            conexion = ConnectionFactory.getConnection();
+            preparada = conexion.prepareStatement(sql);
+            preparada.setString(1, usuario.getPassword());
+            preparada.setInt(2, usuario.getIdUsuario());
+            preparada.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            this.closeConnection();
+        }
+    }
+
+    @Override
     public void updateUsuarioGen(Usuario usuario) {
         Connection conexion = null;
         PreparedStatement preparada = null;

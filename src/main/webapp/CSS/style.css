@@ -20,3 +20,64 @@
     height: 200px;
     object-fit: cover;
 }
+
+.modal-header {
+    background-color: #343a40;
+    color: white;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+}
+
+.modal-body p {
+    margin-bottom: 10px;
+}
+
+.modal-body strong {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.accordion-button {
+    background-color: #343a40;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #495057;
+    color: white;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-item {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    margin-bottom: 10px;
+}
+
+.accordion-body {
+    background-color: #f8f9fa;
+    padding: 15px;
+}
+
+.form-check-label {
+    margin-left: 5px;
+}
+

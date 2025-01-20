@@ -3,6 +3,7 @@ document.getElementById('searchHeader').addEventListener('input', (event)=>{
         document.getElementById('searchBtnHeader').disabled = false;
     }
 });
+
 //Valida formulario de registro y de cambio de datos generales
 document.addEventListener('DOMContentLoaded', function () {
     // Validación del formulario de registro
@@ -212,28 +213,74 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })();
 
+    //Validacion de contraseñas
     (function validatePasswordForm() {
         const form = document.querySelector('form[action$="CambiarContrasenia"]');
-        if (!form) return; // Ensure the form exists in the DOM.
-        const currentPasswordInput = form.querySelector('#contraseniaActual');
-        const newPasswordInput = form.querySelector('#nuevaContrasenia');
-        const confirmPasswordInput = form.querySelector('#ConfNuevaContrasenia');
+        console.log("dentro");
+        if (!form) return;
+        const inputs = form.querySelectorAll('input');
         const submitButton = form.querySelector('button[type="submit"]');
 
-        function validatePasswords() {
-            const currentPassword = currentPasswordInput.value;
-            const newPassword = newPasswordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
+        inputs.forEach(input => {
+            input.addEventListener('blur', function () {
+                validarInput(input);
+                checkFormulario();
+            });
+        });
 
-            const passwordsMatch = newPassword === confirmPassword;
-            const currentPasswordNotEmpty = currentPassword.length > 0;
+        function validarInput(input) {
+            const value = input.value;
+            const id = input.id;
+            let todoBien = true;
 
-            submitButton.disabled = !(passwordsMatch && currentPasswordNotEmpty);
+            switch (id) {
+                case 'contraseniaActual':
+                    todoBien = value.length > 0;
+                    break;
+                case 'nuevaContrasenia':
+                    todoBien = value.length >= 8 && value.length <= 100;
+                    break;
+                case 'ConfNuevaContrasenia':
+                    const newPassword = document.querySelector('#nuevaContrasenia').value;
+                    todoBien = value === newPassword;
+                    break;
+            }
+
+            if (todoBien) {
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+            } else {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                showAlert(mensajeError(id));
+            }
         }
 
-        currentPasswordInput.addEventListener('input', validatePasswords);
-        newPasswordInput.addEventListener('input', validatePasswords);
-        confirmPasswordInput.addEventListener('input', validatePasswords);
+        function checkFormulario() {
+            const allValid = Array.from(inputs).every(input => input.classList.contains('is-valid'));
+            submitButton.disabled = !allValid;
+        }
+
+        function showAlert(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de validación',
+                text: message,
+            });
+        }
+
+        function mensajeError(id) {
+            switch (id) {
+                case 'contraseniaActual':
+                    return 'La contraseña actual no puede estar vacía.';
+                case 'nuevaContrasenia':
+                    return 'La nueva contraseña debe tener entre 8 y 100 caracteres.';
+                case 'ConfNuevaContrasenia':
+                    return 'Las contraseñas no coinciden.';
+                default:
+                    return 'Este campo no es válido.';
+            }
+        }
     })();
 });
 

@@ -1,12 +1,11 @@
 package es.abatech.beans;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Filtro implements Serializable {
-    private List<Integer> categorias = new ArrayList<>();
-    private List<Integer> marcas = new ArrayList<>();
+    private List<Integer> categorias;
+    private List<Integer> marcas;
     private Double precioMax;
 
     public List<Integer> getCategorias() {

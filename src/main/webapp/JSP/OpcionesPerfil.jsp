@@ -22,6 +22,7 @@
 <main class="container">
     <div class="row">
         <div class="col-4">
+            <h2>Cambiar Datos Generales</h2>
             <form action="${applicationScope.contexto}/CambiarDatosGenerales" id="datosGenerales" method="post">
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
@@ -59,6 +60,9 @@
             </form>
         </div>
         <div class="col-4 border border-top-0 border-bottom-0 border-dark-subtle">
+            <h2>Cambiar Contrase&ntilde;a</h2>
+            <p class="text-danger">${requestScope.errorContra}</p>
+            <p class="text-primary">${requestScope.notiContra}</p>
             <form action="${contexto}/CambiarContrasenia" method="post">
                 <div class="mb-3">
                     <label for="contraseniaActual" class="form-label">Contrase&ntilde;a Actual</label>
@@ -76,6 +80,7 @@
             </form>
         </div>
         <div class="col-4">
+            <h2>Cambiar Avatar</h2>
             <form action="${contexto}/CambiarAvatar" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="avatar" class="form-label">Avatar</label>
@@ -86,6 +91,7 @@
         </div>
     </div>
 </main>
+<c:import url="../INC/footer.jsp"/>
 <script src="${bootstrapJS}"></script>
 <script src="${javaScript}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
