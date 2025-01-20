@@ -1,10 +1,7 @@
 package es.abatech.DAOFactory;
 
 
-import es.abatech.DAO.CategoriasDAO;
-import es.abatech.DAO.ICategoriasDAO;
-import es.abatech.DAO.IProductosDAO;
-import es.abatech.DAO.ProductosDAO;
+import es.abatech.DAO.*;
 
 /**
  * Fábrica concreta para la fuente de datos MySQL
@@ -17,8 +14,11 @@ public class MySQLDAOFactory extends DAOFactory{
         return new CategoriasDAO();
     }
 
+    @Override
     public IProductosDAO getProductosDAO() {
         return new ProductosDAO();
     }
-   
+
+    @Override
+    public IUsuariosDAO getUsuariosDAO() { return new UsuariosDAO(); }
 }

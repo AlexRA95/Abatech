@@ -2,6 +2,7 @@ package es.abatech.DAOFactory;
 
 import es.abatech.DAO.ICategoriasDAO;
 import es.abatech.DAO.IProductosDAO;
+import es.abatech.DAO.IUsuariosDAO;
 
 public abstract class DAOFactory {
 
@@ -11,6 +12,7 @@ public abstract class DAOFactory {
      */
     public abstract ICategoriasDAO getCategoriasDAO();
     public abstract IProductosDAO getProductosDAO();
+    public abstract IUsuariosDAO getUsuariosDAO();
 
     /**
      * Fábrica abstracta

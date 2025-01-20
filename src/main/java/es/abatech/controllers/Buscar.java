@@ -26,7 +26,7 @@ public class Buscar extends HttpServlet {
         switch (request.getParameter("opcion")){
             case "buscar":
                 //Si el usuario quiere buscar se realiza la consulta
-                productos = pdao.getProductosByNombre(request.getParameter("nombre"));
+                productos = pdao.getProductosByDescripcion(request.getParameter("nombre"));
                 request.setAttribute("productos", productos);
                 URL= "index.jsp";
                 break;

@@ -2,6 +2,7 @@ package es.abatech.beans;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class Usuario implements Serializable {
     private Short idUsuario;
