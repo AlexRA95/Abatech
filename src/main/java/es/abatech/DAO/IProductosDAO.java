@@ -10,5 +10,6 @@ public interface IProductosDAO {
     public List<Producto> getProductosByDescripcion(String descripcion);
     public List<Producto> getProductosByFiltro(Filtro filtro);
     public List<String> getMarcas();
+    public Producto getProductoById(int idProducto);
     public void closeConnection();
 }

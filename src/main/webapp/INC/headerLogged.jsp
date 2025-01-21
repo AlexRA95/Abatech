@@ -1,3 +1,6 @@
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <header class="p-3 bg-light text-dark mb-3 border-bottom shadow-sm">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -52,7 +55,7 @@
                 <div>
                     <p class="mb-0">${sessionScope.usuario.nombre} ${sessionScope.usuario.apellidos}</p>
                     <p class="mb-0">
-                        &Uacute;ltima conexi&oacute;n: ${sessionScope.usuario.ultimoAcceso}
+                        &Uacute;ltima conexi&oacute;n: <fmt:formatDate type="both" dateStyle="medium" timeStyle="medium" value="${sessionScope.usuario.ultimoAcceso}" />
                     </p>
                 </div>
             </div>

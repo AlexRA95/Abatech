@@ -1,15 +1,19 @@
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
 <header class="p-3 bg-light text-dark mb-3 border-bottom shadow-sm">
     <div class="container">
-        <form method="post" action="${applicationScope.contexto}/Buscar" class="row align-items-center">
+        <div class="row align-items-center">
             <!-- Logo -->
-            <div class="col-12 col-lg-auto mb-3 mb-lg-0 text-center">
+            <form method="post" action="${applicationScope.contexto}/Buscar" class="col-12 col-lg-auto mb-3 mb-lg-0 text-center">
                 <button type="submit" name="opcion" value="nada" class="btn border-0 bg-transparent p-0">
                     <img class="img-fluid" src="${applicationScope.contexto}/IMG/logo/Abatech.png" alt="Abatech Logo" style="max-height: 80px;">
                 </button>
-            </div>
+            </form>
 
             <!-- Barra de búsqueda -->
-            <div class="col-12 col-lg mb-3 mb-lg-0">
+            <form method="post" action="${applicationScope.contexto}/Buscar" class="col-12 col-lg mb-3 mb-lg-0">
                 <div class="input-group">
                     <input
                             id="searchHeader"
@@ -28,7 +32,7 @@
                         Buscar
                     </button>
                 </div>
-            </div>
+            </form>
 
             <!-- Botones de inicio de sesión y registro -->
             <div class="col-12 col-lg-auto text-center">
@@ -47,7 +51,21 @@
                     Registrarse
                 </button>
             </div>
-        </form>
+            <form method="post" action="${applicationScope.contexto}/OpcionesUser" class="col-12 col-lg-auto d-flex align-items-center">
+                <button type="submit" name="opcion" value="carrito" class="btn btn-outline-primary me-2 d-flex justify-content-between align-items-center">
+                    <i class="bi bi-cart"></i>
+                    <c:set var="totalCantidad" value="0" />
+                    <c:forEach var="linea" items="${sessionScope.carrito.lineasPedido}">
+                        <c:set var="totalCantidad" value="${totalCantidad + linea.cantidad}" />
+                    </c:forEach>
+                    <c:choose>
+                        <c:when test="${totalCantidad > 0}">
+                            <span class="badge bg-primary">${totalCantidad}</span>
+                        </c:when>
+                    </c:choose>
+                </button>
+            </form>
+        </div>
     </div>
 </header>
 

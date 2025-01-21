@@ -55,6 +55,44 @@ public class ProductosDAO implements IProductosDAO {
     }
 
     @Override
+    public Producto getProductoById(int idProducto) {
+        Connection conexion = null;
+        PreparedStatement preparada = null;
+        ResultSet resultado = null;
+        String sql = null;
+        Producto producto = null;
+        Categoria categoria = null;
+
+        try {
+            conexion = ConnectionFactory.getConnection();
+            sql = "Select p.*, c.*\n" +
+                    "from productos as p\n" +
+                    "JOIN abatech.categorias c on p.idCategoria = c.idCategoria\n" +
+                    "WHERE p.idProducto = ?";
+            preparada = conexion.prepareStatement(sql);
+            preparada.setInt(1, idProducto);
+            resultado = preparada.executeQuery();
+            if (resultado.next()) {
+                producto = new Producto();
+                producto.setIdProducto(resultado.getShort("p.idProducto"));
+                producto.setNombre(resultado.getString("p.nombre"));
+                producto.setDescripcion(resultado.getString("p.descripcion"));
+                producto.setMarca(resultado.getString("p.marca"));
+                producto.setPrecio(resultado.getDouble("p.precio"));
+                producto.setImagen(resultado.getString("p.imagen"));
+                categoria = new Categoria();
+                categoria.setNombre(resultado.getString("c.nombre"));
+                producto.setCategoria(categoria);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(CategoriasDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            this.closeConnection();
+        }
+        return producto;
+    }
+
+    @Override
     public List<Producto> getProductosByDescripcion(String descripcion) {
         Connection conexion = null;
         PreparedStatement preparada = null;

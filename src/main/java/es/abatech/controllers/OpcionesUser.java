@@ -22,6 +22,9 @@ public class OpcionesUser extends HttpServlet {
             case "pedidos":
                 URL=".";
                 break;
+            case "carrito":
+                URL="JSP/Carrito.jsp";
+                break;
         }
         request.getRequestDispatcher(URL).forward(request, response);
     }

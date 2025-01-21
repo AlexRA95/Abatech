@@ -11,6 +11,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,12 +33,16 @@ public class Frontcontroller extends HttpServlet {
         Pedido pedido = new Pedido();
         HttpSession session = request.getSession();
         cookie = Utils.buscarCookie("carrito", request.getCookies());
-        if (cookie != null) {
-            //Añadimos contenido de la cookie a la sesion
-            //session.setAttribute("carrito",Utils.cookieToSesion(cookie));
-        }else {
-            //Si no existe la cookie, creamos la sesion vacia
+        if (pedido == null) {
+            pedido = new Pedido();
             session.setAttribute("carrito", pedido);
+        } else {
+            cookie = Utils.buscarCookie("carrito", request.getCookies());
+            if (cookie != null) {
+                // Añadimos contenido de la cookie a la sesion
+                Utils.cookieToPedido(URLDecoder.decode(cookie.getValue(), "UTF-8"),pedido);
+                session.setAttribute("carrito", pedido);
+            }
         }
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }

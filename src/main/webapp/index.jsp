@@ -1,6 +1,7 @@
 <jsp:directive.page contentType="text/html" pageEncoding="UTF-8"/>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <c:url var="bootstrap" value="/CSS/bootstrap.min.css" scope="application" />
 <c:url var="bootstrapJS" value="/JS/bootstrap.bundle.min.js" scope="application" />
 <c:url var="estilo" value="/CSS/style.css" scope="application"/>
@@ -11,10 +12,8 @@
     <jsp:include page="INC/metas.jsp">
         <jsp:param name="titulo" value="Abatech - Inicio" />
     </jsp:include>
-    <link rel="stylesheet" href="${bootstrap}" />
 </head>
 <body>
-
 <c:choose>
     <c:when test="${empty sessionScope.usuario}">
         <c:import url="INC/headerAnon.jsp"/>
@@ -29,6 +28,9 @@
         <aside class="col-md-3 border border-dark-subtle rounded-2">
             <h2 class="text-center">Filtros</h2>
             <form action="${contexto}/FiltrarProds" method="post">
+                <div class="mb-3 d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </div>
                 <div class="accordion" id="filterAccordion">
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingCategory">
@@ -40,8 +42,7 @@
                             <div class="accordion-body">
                                 <c:forEach var="categoria" items="${applicationScope.categorias}">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="categorias" value="${categoria.idCategoria}" id="categoria${categoria.idCategoria}"
-                                        ${param.categorias}>
+                                        <input class="form-check-input" type="checkbox" name="categorias" value="${categoria.idCategoria}" id="categoria${categoria.idCategoria}" ${param.categorias}>
                                         <label class="form-check-label" for="categoria${categoria.idCategoria}">
                                                 ${categoria.nombre}
                                         </label>
@@ -78,14 +79,11 @@
                         <div id="collapsePrice" class="accordion-collapse collapse" aria-labelledby="headingPrice" data-bs-parent="#filterAccordion">
                             <div class="accordion-body">
                                 <label for="precio" class="form-label">Precio m&aacute;ximo</label>
-                                <input type="range" name="precioMax" id="precio" value="1000" class="form-range" min="0" max="1000" step="0.01">
-                                <p>Precio m&aacute;ximo: <span id="precioValue">1000,00 €</span></p>
+                                <input type="range" name="precioMax" id="precio" value="2000" class="form-range" min="0" max="2000" step="0.01">
+                                <p>Precio m&aacute;ximo: <span id="precioValue">2000,00 €</span></p>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="mb-3 d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Filtrar</button>
                 </div>
             </form>
         </aside>
@@ -141,8 +139,10 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">A&ntilde;adir al carrito</button>
+                                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
+                                        <form method="post" action="${applicationScope.contexto}/Carrito">
+                                            <button type="submit" name="anadir" value="${producto.idProducto}" class="btn btn-primary"><i class="bi bi-cart"></i> A&ntilde;adir al carrito</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

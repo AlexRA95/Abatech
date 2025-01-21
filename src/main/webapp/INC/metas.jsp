@@ -14,6 +14,7 @@
 <meta name="description" content="Tienda online de componentes de PC">
 <!--  -->
 <title>${param.titulo}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link href="${applicationScope.bootstrap}" rel="stylesheet">
 <script src="${applicationScope.bootstrapJS}"></script>
 <link href="${applicationScope.estilo}" rel="stylesheet">
