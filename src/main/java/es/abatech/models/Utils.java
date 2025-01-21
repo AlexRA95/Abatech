@@ -1,5 +1,6 @@
 package es.abatech.models;
 
+import javax.servlet.http.Cookie;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,6 +27,19 @@ public class Utils {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public static Cookie buscarCookie(String nombre, Cookie[] cookies){
+        Cookie c = null;
+        if(cookies != null){
+            for (Cookie value : cookies) {
+                if (value.getName().equals(nombre)) {
+                    c = value;
+                    break;
+                }
+            }
+        }
+        return c;
     }
 
     public static boolean contrasIguales(String contraActu, String contraNueva) {
