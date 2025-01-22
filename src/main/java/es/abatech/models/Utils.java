@@ -11,6 +11,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Utils {
@@ -120,6 +121,10 @@ public class Utils {
             lineasPedido.add(lp);
         }
         pedido.setLineasPedido(lineasPedido);
+        updateImportePedido(pedido);
+        pedido.setEstado(Pedido.Estado.c);
+        pedido.setIva(0.21);
+        pedido.setFecha(new Date());
         return pedido;
     }
 

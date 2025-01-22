@@ -21,6 +21,7 @@ public class Frontcontroller extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //Hacemos una consulta para obtener 8 productos aleatorios
         DAOFactory daof = DAOFactory.getDAOFactory();
+        HttpSession session = request.getSession();
         IProductosDAO pdao = daof.getProductosDAO();
         List<Producto> productos = new ArrayList<>();
         productos = pdao.get8productosRand();
@@ -30,25 +31,30 @@ public class Frontcontroller extends HttpServlet {
         //Si existe metemos su contenido en un pedido y lo metemos en sesion
         //Si no existe creamos un pedido vacio y lo metemos en sesion
         Cookie cookie = null;
-        Pedido pedido = new Pedido();
-        HttpSession session = request.getSession();
+        Pedido pedido = (Pedido) session.getAttribute("carrito");
         cookie = Utils.buscarCookie("carrito", request.getCookies());
-        if (pedido == null) {
+        if (cookie != null) {
+            // Añadimos contenido de la cookie a la sesion
             pedido = new Pedido();
+            Utils.cookieToPedido(URLDecoder.decode(cookie.getValue(), "UTF-8"),pedido);
             session.setAttribute("carrito", pedido);
-        } else {
-            cookie = Utils.buscarCookie("carrito", request.getCookies());
-            if (cookie != null) {
-                // Añadimos contenido de la cookie a la sesion
-                Utils.cookieToPedido(URLDecoder.decode(cookie.getValue(), "UTF-8"),pedido);
-                session.setAttribute("carrito", pedido);
-            }
+        }else{
+            // Si no existe la cookie, creamos la sesion vacia
+            session.setAttribute("carrito", null);
         }
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+        //Hacemos una consulta para obtener 8 productos aleatorios
+        DAOFactory daof = DAOFactory.getDAOFactory();
+        HttpSession session = request.getSession();
+        IProductosDAO pdao = daof.getProductosDAO();
+        List<Producto> productos = new ArrayList<>();
+        productos = pdao.get8productosRand();
+        request.setAttribute("productos", productos);
+
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 }

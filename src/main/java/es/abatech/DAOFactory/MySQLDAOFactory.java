@@ -21,4 +21,14 @@ public class MySQLDAOFactory extends DAOFactory{
 
     @Override
     public IUsuariosDAO getUsuariosDAO() { return new UsuariosDAO(); }
+
+    @Override
+    public IPedidoDAO getPedidoDAO() {
+        return new PedidoDAO();
+    }
+
+    @Override
+    public ILineaPedidosDAO getLineaPedidosDAO() {
+        return new LineaPedidosDAO();
+    }
 }

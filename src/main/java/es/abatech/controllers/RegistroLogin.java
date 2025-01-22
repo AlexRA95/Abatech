@@ -1,7 +1,9 @@
 package es.abatech.controllers;
 
+import es.abatech.DAO.IPedidoDAO;
 import es.abatech.DAO.IUsuariosDAO;
 import es.abatech.DAOFactory.DAOFactory;
+import es.abatech.beans.Pedido;
 import es.abatech.beans.Usuario;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -24,41 +26,67 @@ public class RegistroLogin extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         DAOFactory daof = DAOFactory.getDAOFactory();
         IUsuariosDAO udao = daof.getUsuariosDAO();
+        IPedidoDAO pdao = daof.getPedidoDAO();
         String URL = ".";
         Usuario usuario = new Usuario();
         HttpSession sesion = request.getSession();
         Map<String, String[]> parametros = request.getParameterMap();
-
-        switch (request.getParameter("opcion")){
-            case "Registrar":
-                try {
-                    BeanUtils.populate(usuario, parametros);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException(e);
-                }
-                if(request.getParameter("avatar") == null){
-                    usuario.setAvatar("default.png");
-                }
-                usuario.setUltimoAcceso(new Timestamp(System.currentTimeMillis()));
-                udao.createUsuario(usuario);
-                //Volvemos a darle datos al usuario para que este tenga su idUsuario de la base de datos
-                usuario = udao.getUsusarioByEmailPassword(usuario.getEmail(), usuario.getPassword());
-                sesion.setAttribute("usuario", usuario);
-                break;
-            case "Iniciar":
-                usuario = udao.getUsusarioByEmailPassword(request.getParameter("email"), request.getParameter("password"));
-                //Si el usuario existe, actualizamos su último acceso
-                //Si no existe, se queda en null y se manda un mensaje de error
-                if(usuario.getIdUsuario() != null){
-                    udao.updateUltimaConex(new Timestamp(System.currentTimeMillis()), usuario.getIdUsuario());
+        if (request.getParameter("opcion").equals("salir")){
+            sesion.removeAttribute("usuario");
+            // Eliminamos el atributo de sesion de carrito si existe
+            if (sesion.getAttribute("carrito") != null) {
+                sesion.removeAttribute("carrito");
+            }
+        }else {
+            switch (request.getParameter("opcion")){
+                case "Registrar":
+                    try {
+                        BeanUtils.populate(usuario, parametros);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if(request.getParameter("avatar") == null){
+                        usuario.setAvatar("default.png");
+                    }
+                    usuario.setUltimoAcceso(new Timestamp(System.currentTimeMillis()));
+                    udao.createUsuario(usuario);
+                    //Volvemos a darle datos al usuario para que este tenga su idUsuario de la base de datos
+                    usuario = udao.getUsusarioByEmailPassword(usuario.getEmail(), usuario.getPassword());
                     sesion.setAttribute("usuario", usuario);
+                    break;
+                case "Iniciar":
+                    usuario = udao.getUsusarioByEmailPassword(request.getParameter("email"), request.getParameter("password"));
+                    //Si el usuario existe, actualizamos su último acceso
+                    //Si no existe, se queda en null y se manda un mensaje de error
+                    if(usuario.getIdUsuario() != null){
+                        udao.updateUltimaConex(new Timestamp(System.currentTimeMillis()), usuario.getIdUsuario());
+                        sesion.setAttribute("usuario", usuario);
+                    }else{
+                        request.setAttribute("error", "Usuario o contraseña incorrectos");
+                    }
+                    break;
+            }
+            //Una vez registrado o logeado, miramos si hay algo en el atributo de sesion de carrito
+            if(sesion.getAttribute("carrito") != null){
+                //Si hay algo, comprobamos en la BBDD si el usuario tiene un carrito guardado
+                Pedido pedido = pdao.getPedidoByUser(usuario);
+                if(pedido != null){
+                    //Si lo tiene, cambiamos la sesion por el carrito de la BBDD
+                    sesion.setAttribute("carrito", pedido);
                 }else{
-                    request.setAttribute("error", "Usuario o contraseña incorrectos");
+                    //Si no lo tiene, guardamos el carrito de la sesion en la BBDD
+                    pedido = (Pedido) sesion.getAttribute("carrito");
+                    pedido.setUsuario(usuario);
+                    pdao.addPedido(pedido);
                 }
-                break;
-            case "salir":
-                sesion.removeAttribute("usuario");
-                break;
+            }else{
+                //Si no hay nada en la sesion, comprobamos si el usuario tiene un carrito en la BBDD
+                Pedido pedido = pdao.getPedidoByUser(usuario);
+                if(pedido != null){
+                    //Si lo tiene, cambiamos la sesion por el carrito de la BBDD
+                    sesion.setAttribute("carrito", pedido);
+                }
+            }
         }
 
         request.getRequestDispatcher(URL).forward(request, response);
