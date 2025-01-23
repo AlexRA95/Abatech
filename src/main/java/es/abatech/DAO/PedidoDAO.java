@@ -52,6 +52,9 @@ public class PedidoDAO implements IPedidoDAO {
                 producto.setIdProducto((short) resultado.getInt("idProducto"));
                 producto.setNombre(resultado.getString("nombre"));
                 producto.setPrecio(resultado.getDouble("precio"));
+                producto.setImagen(resultado.getString("imagen"));
+                producto.setMarca(resultado.getString("marca"));
+                producto.setDescripcion(resultado.getString("descripcion"));
                 // Set the Producto to the LineaPedido
                 linea.setProducto(producto);
                 // Add the LineaPedido to the list
@@ -136,6 +139,23 @@ public class PedidoDAO implements IPedidoDAO {
         }
     }
 
+    @Override
+    public void deletePedido(Pedido pedido) {
+        Connection conexion = null;
+        PreparedStatement preparada = null;
+        String sql = "DELETE FROM pedidos WHERE idPedido = ?";
+
+        try {
+            conexion = ConnectionFactory.getConnection();
+            preparada = conexion.prepareStatement(sql);
+            preparada.setShort(1, pedido.getIdPedido());
+            preparada.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            this.closeConnection();
+        }
+    }
 
     @Override
     public void closeConnection() {

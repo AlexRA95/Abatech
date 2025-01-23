@@ -22,34 +22,48 @@
 <main class="container">
     <div class="row">
         <div class="row">
-            <table class="table">
-                <thead>
+            <table class="table table-striped table-hover table-bordered align-middle">
+                <thead class="table-dark">
                 <tr>
                     <th scope="col">Imagen</th>
                     <th scope="col">Producto</th>
-                    <th scope="col">Cantidad</th>
+                    <th scope="col" class="text-center">Cantidad</th>
                     <th scope="col" class="text-end">Precio</th>
                     <th scope="col" class="text-end">Subtotal</th>
-                    <th scope="col">Acciones</th>
+                    <th scope="col" class="text-center">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:forEach var="linea" items="${sessionScope.carrito.lineasPedido}">
                     <tr>
-                        <td><img src="${applicationScope.contexto}/IMG/productos/${linea.producto.imagen}.jpg" alt="${linea.producto.nombre}" width="50" height="50"></td>
+                        <td class="text-center">
+                            <img src="${applicationScope.contexto}/IMG/productos/${linea.producto.imagen}.jpg" alt="${linea.producto.nombre}" class="img-thumbnail" style="width: 50px; height: 50px;">
+                        </td>
                         <td>${linea.producto.nombre}</td>
-                        <td>${linea.cantidad}</td>
+                        <td class="text-center">${linea.cantidad}</td>
                         <td class="text-end"><fmt:formatNumber value="${linea.producto.precio}" type="currency" currencySymbol="€"/></td>
                         <td class="text-end"><fmt:formatNumber value="${linea.cantidad * linea.producto.precio}" type="currency" currencySymbol="€"/></td>
-                        <td>
-                            <form action="ActualizarCantidad" method="post" style="display:inline;">
+                        <td class="text-center">
+                            <form action="${applicationScope.contexto}/GestionCarrito" method="post" style="display:inline;">
                                 <input type="hidden" name="idProducto" value="${linea.producto.idProducto}">
-                                <button type="submit" name="accion" value="incrementar" class="btn btn-success btn-sm">+</button>
-                                <button type="submit" name="accion" value="decrementar" class="btn btn-danger btn-sm">-</button>
+                                <button type="submit" name="opcion" value="incrementar" class="btn btn-success btn-sm" title="Añadir">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                                <button type="submit" name="opcion" value="decrementar" class="btn btn-danger btn-sm" title="Quitar">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <button type="submit" name="opcion" value="eliminar" class="btn btn-outline-danger btn-sm" title="Quitar">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
                             </form>
                         </td>
                     </tr>
                 </c:forEach>
+                <tr>
+                    <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                    <td class="text-end"><fmt:formatNumber value="${sessionScope.carrito.importe}" type="currency" currencySymbol="€"/></td>
+                    <td></td>
+                </tr>
                 </tbody>
             </table>
         </div>

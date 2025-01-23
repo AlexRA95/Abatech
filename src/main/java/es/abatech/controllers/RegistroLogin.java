@@ -5,6 +5,7 @@ import es.abatech.DAO.IUsuariosDAO;
 import es.abatech.DAOFactory.DAOFactory;
 import es.abatech.beans.Pedido;
 import es.abatech.beans.Usuario;
+import es.abatech.models.Utils;
 import org.apache.commons.beanutils.BeanUtils;
 
 import javax.servlet.*;
@@ -78,6 +79,12 @@ public class RegistroLogin extends HttpServlet {
                     pedido = (Pedido) sesion.getAttribute("carrito");
                     pedido.setUsuario(usuario);
                     pdao.addPedido(pedido);
+                }
+                //Haya algo en la BBDD o no, eliminamos la cookie al usuario
+                Cookie cookie = Utils.buscarCookie("carrito",request.getCookies());
+                if(cookie != null){
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
                 }
             }else{
                 //Si no hay nada en la sesion, comprobamos si el usuario tiene un carrito en la BBDD

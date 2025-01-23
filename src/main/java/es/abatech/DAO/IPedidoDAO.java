@@ -9,6 +9,8 @@ public interface IPedidoDAO {
 
     public void addPedido(Pedido pedido);
 
+    public void deletePedido(Pedido pedido);
+
     /**
      * Cierra la conexión con la base de datos.
      */

@@ -16,7 +16,7 @@ public class UsuariosDAO implements IUsuariosDAO {
     public void updateUsuarioContra(Usuario usuario) {
         Connection conexion = null;
         PreparedStatement preparada = null;
-        String sql = "UPDATE usuarios SET Password = ? WHERE IdUsuario = ?";
+        String sql = "UPDATE usuarios SET password = ? WHERE idUsuario = ?";
         try {
             conexion = ConnectionFactory.getConnection();
             preparada = conexion.prepareStatement(sql);
@@ -34,7 +34,7 @@ public class UsuariosDAO implements IUsuariosDAO {
     public void updateUsuarioGen(Usuario usuario) {
         Connection conexion = null;
         PreparedStatement preparada = null;
-        String sql = "UPDATE usuarios SET Nombre = ?, Apellidos = ?, NIF = ?, Telefono = ?, Direccion = ?, CodigoPostal = ?, Localidad = ?, Provincia = ? WHERE IdUsuario = ?";
+        String sql = "UPDATE usuarios SET nombre = ?, apellidos = ?, NIF = ?, telefono = ?, direccion = ?, codigoPostal = ?, localidad = ?, provincia = ? WHERE idUsuario = ?";
         try {
             conexion = ConnectionFactory.getConnection();
             preparada = conexion.prepareStatement(sql);
@@ -59,7 +59,7 @@ public class UsuariosDAO implements IUsuariosDAO {
     public void createUsuario(Usuario usuario) {
         Connection connection = null;
         PreparedStatement preparada = null;
-        String sql = "INSERT INTO usuarios (Email,Password,Nombre,Apellidos,NIF,Telefono,Direccion,CodigoPostal,Localidad,Provincia,UltimoAcceso) "
+        String sql = "INSERT INTO usuarios (email,password,nombre,apellidos,NIF,telefono,direccion,codigoPostal,localidad,provincia,ultimoAcceso) "
                 + "VALUES (?,md5(?),?,?,?,?,?,?,?,?,?)";
         try {
             connection = ConnectionFactory.getConnection();
@@ -98,7 +98,7 @@ public class UsuariosDAO implements IUsuariosDAO {
     public void updateUltimaConex(Timestamp ultimaConexion, Short idUsuario) {
         Connection conexion = null;
         PreparedStatement preparada = null;
-        String sql = "UPDATE usuarios SET UltimoAcceso = ? WHERE IdUsuario = ?";
+        String sql = "UPDATE usuarios SET ultimoAcceso = ? WHERE idUsuario = ?";
         try {
             conexion = ConnectionFactory.getConnection();
             preparada = conexion.prepareStatement(sql);
@@ -122,7 +122,7 @@ public class UsuariosDAO implements IUsuariosDAO {
 
         try {
             conexion = ConnectionFactory.getConnection();
-            sql = "SELECT * FROM usuarios WHERE Email = ? AND Password = md5(?)";
+            sql = "SELECT * FROM usuarios WHERE email = ? AND password = md5(?)";
             preparada = conexion.prepareStatement(sql);
             preparada.setString(1, email);
             preparada.setString(2, password);

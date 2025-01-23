@@ -38,12 +38,13 @@ public class Carrito extends HttpServlet {
             pedido = new Pedido();
             pedido.setIva(21.0);
             pedido.setFecha(new Date());
+            pedido.setEstado(Pedido.Estado.c);
             session.setAttribute("carrito", pedido);
             primerPedido = true;
         }
         Integer idProducto = Integer.valueOf(request.getParameter("anadir"));
         producto = pdao.getProductoById(idProducto);
-        Utils.addProductoToPedido(producto, pedido);
+        Boolean yaEsta = Utils.addProductoToPedido(producto, pedido);
         Utils.updateImportePedido(pedido);
         if (session.getAttribute("usuario") == null){
             //Si el usuario no está logeado, metemos el contenido del carrito en la cookie
@@ -58,8 +59,14 @@ public class Carrito extends HttpServlet {
                 pedido.setUsuario(usuario);
                 pedao.addPedido(pedido);
             }else{
-                //Si no es el primer pedido, creamos una nueva linea de pedido en la BBDD y se lo añadimos al pedido que tenemos
-                System.out.println("Pedido: " + pedido.getIdPedido());
+                if (yaEsta){
+                    //Si el producto ya estaba en el carrito, aumentamos la cantidad
+                    lpdao.aumentarLineaPedido(pedido, idProducto);
+                }else {
+                    //Si el producto no estaba en el carrito, lo añadimos
+                    lpdao.addLineaPedido(pedido.getLineasPedido().get(pedido.getLineasPedido().size()-1), pedido.getIdPedido());
+                }
+
             }
         }
 
