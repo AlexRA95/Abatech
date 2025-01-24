@@ -34,6 +34,7 @@ public class CambiarDatosGenerales extends HttpServlet {
         }
         udao.updateUsuarioGen(usuario);
         sesion.setAttribute("usuario", usuario);
+        request.setAttribute("succes", "Se han cambiado los datos correctamente");
 
         request.getRequestDispatcher(URL).forward(request, response);
     }

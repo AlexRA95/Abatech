@@ -150,6 +150,7 @@ public class GestionCarrito extends HttpServlet {
                 pdao.updatePedido(pedido);
                 //Ahora, borraos el pedido de la sesion
                 session.setAttribute("carrito", null);
+                request.setAttribute("succes", "Compra realizada con éxito");
                 break;
             case "vaciar":
                 //Si el usuario está logeado, borramos las lineas de pedido de la base de datos y luego el pedido
@@ -165,6 +166,7 @@ public class GestionCarrito extends HttpServlet {
                     Cookie cookie = Utils.buscarCookie("carrito",request.getCookies());
                     cookie.setMaxAge(0);//Borramos la cookie
                     response.addCookie(cookie);
+                    request.setAttribute("error", "Se han eliminado todos los productos del carrito");
                 }
                 break;
 

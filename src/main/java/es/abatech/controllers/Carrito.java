@@ -70,6 +70,8 @@ public class Carrito extends HttpServlet {
             }
         }
 
+        request.setAttribute("succes","Producto añadido al carrito");
+
 
         request.getRequestDispatcher(".").forward(request, response);
     }

@@ -29,10 +29,10 @@ public class CambiarContrasenia extends HttpServlet {
             //Si la contraseña actual del usuario coincide con la introducida, cambiamos la contraseña
             usuario.setPassword(Utils.md5(request.getParameter("nuevaContrasenia")));
             udao.updateUsuarioContra(usuario);
-            request.setAttribute("notiContra", "Se ha cambiado la contraseña correctamente");
+            request.setAttribute("succes", "Se ha cambiado la contraseña correctamente");
         }else{
             //Si la contraseña actual del usuario no coincide con la introducida, mostramos un mensaje de error
-            request.setAttribute("errorContra", "La contraseña actual no coincide");
+            request.setAttribute("error", "La contraseña actual no coincide");
         }
 
         request.getRequestDispatcher(URL).forward(request, response);

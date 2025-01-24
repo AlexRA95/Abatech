@@ -204,4 +204,10 @@ public class Utils {
         pedido.setLineasPedido(lineasPedido);
         updateImportePedido(pedido);
     }
+
+    private char calcularLetraNIF(String nif) {
+        String letters = "TRWAGMYFPDXBNJZSQVHLCKE";
+        int number = Integer.parseInt(nif);
+        return letters.charAt(number % 23);
+    }
 }

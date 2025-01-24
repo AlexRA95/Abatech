@@ -123,15 +123,22 @@ document.addEventListener('DOMContentLoaded', function () {
     // Validación del formulario de cambio de datos generales
     (function validarDatosGenerales() {
         const form = document.querySelector('form[action$="CambiarDatosGenerales"]');
-        if (!form) return; // Asegúrate de que el formulario exista en el DOM.
+        if (!form) return; // Ensure the form exists in the DOM.
         const inputs = form.querySelectorAll('input');
         const submitButton = form.querySelector('button[type="submit"]');
 
-        inputs.forEach(input => {
-            input.addEventListener('blur', function () {
+        submitButton.addEventListener('click', function (event) {
+            let formValid = true;
+            inputs.forEach(input => {
                 validarInput(input);
-                checkFormulario();
+                if (!input.classList.contains('is-valid')) {
+                    formValid = false;
+                }
             });
+            if (!formValid) {
+                event.preventDefault();
+                showAlert('Por favor, corrige los errores en el formulario.');
+            }
         });
 
         function validarInput(input) {
@@ -176,11 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        function checkFormulario() {
-            const allValid = Array.from(inputs).every(input => input.classList.contains('is-valid'));
-            submitButton.disabled = !allValid;
-        }
-
         function showAlert(message) {
             Swal.fire({
                 icon: 'error',
@@ -214,9 +216,15 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 
     //Validacion de contraseñas
-    (function validatePasswordForm() {
+    const button = document.querySelector('button[type="submit"][formaction$="CambiarContrasenia"]');
+    if (button) {
+        button.addEventListener('click', function (event) {
+            validatePasswordForm();
+        });
+    }
+
+    function validatePasswordForm() {
         const form = document.querySelector('form[action$="CambiarContrasenia"]');
-        console.log("dentro");
         if (!form) return;
         const inputs = form.querySelectorAll('input');
         const submitButton = form.querySelector('button[type="submit"]');
@@ -281,13 +289,41 @@ document.addEventListener('DOMContentLoaded', function () {
                     return 'Este campo no es válido.';
             }
         }
-    })();
+    }
 });
 
-document.getElementById('precio').addEventListener('input', (event)=>{
-    const value = event.target.value;
-    const formattedValue = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(value);
-    document.getElementById('precioValue').textContent = formattedValue;
-});
+if (document.getElementById('precio') != null){
+    document.getElementById('precio').addEventListener('input', (event)=>{
+        const value = event.target.value;
+        const formattedValue = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(value);
+        document.getElementById('precioValue').textContent = formattedValue;
+    });
+}
+
+//Función para generar la letra del NIF y mostrarla en el campo correspondiente
+async function calcularLetraNIF() {
+    const URL = "Abatech/CalcularLetraNIF_AJAX";
+    const nif = document.getElementById("floatingNIF").value;
+        const myHeaders = {
+            "Content-Type": "application/x-www-form-urlencoded",
+        };
+
+        try {
+            const response = await fetch(URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    NIF: nif
+                }),
+                headers: myHeaders,
+            });
+            if (!response.ok) {
+                throw new Error('Error en la solicitud: ' + response.statusText);
+            }
+            const data = await response.json();
+            console.log(data);
 
 
+        } catch (error) {
+            console.error('Error al obtener el mensaje del servidor:', error);
+        }
+}

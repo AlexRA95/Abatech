@@ -29,6 +29,7 @@ public class RegistroLogin extends HttpServlet {
         IUsuariosDAO udao = daof.getUsuariosDAO();
         IPedidoDAO pdao = daof.getPedidoDAO();
         String URL = ".";
+        Boolean error = false;
         Usuario usuario = new Usuario();
         HttpSession sesion = request.getSession();
         Map<String, String[]> parametros = request.getParameterMap();
@@ -64,35 +65,40 @@ public class RegistroLogin extends HttpServlet {
                         sesion.setAttribute("usuario", usuario);
                     }else{
                         request.setAttribute("error", "Usuario o contraseña incorrectos");
+                        error = true;
                     }
                     break;
             }
-            //Una vez registrado o logeado, miramos si hay algo en el atributo de sesion de carrito
-            if(sesion.getAttribute("carrito") != null){
-                //Si hay algo, comprobamos en la BBDD si el usuario tiene un carrito guardado
-                Pedido pedido = pdao.getPedidoByUser(usuario);
-                if(pedido != null){
-                    //Si lo tiene, cambiamos la sesion por el carrito de la BBDD
-                    sesion.setAttribute("carrito", pedido);
+            //Comprobamos si el usuario se ha logeado correctamente, si no se redirecciona con un error
+            if (!error){
+                //Una vez registrado o logeado, miramos si hay algo en el atributo de sesion de carrito
+                if(sesion.getAttribute("carrito") != null){
+                    //Si hay algo, comprobamos en la BBDD si el usuario tiene un carrito guardado
+                    Pedido pedido = pdao.getPedidoByUser(usuario);
+                    if(pedido != null){
+                        //Si lo tiene, cambiamos la sesion por el carrito de la BBDD
+                        sesion.setAttribute("carrito", pedido);
+                    }else{
+                        //Si no lo tiene, guardamos el carrito de la sesion en la BBDD
+                        pedido = (Pedido) sesion.getAttribute("carrito");
+                        pedido.setUsuario(usuario);
+                        pdao.addPedido(pedido);
+                    }
+                    //Haya algo en la BBDD o no, eliminamos la cookie al usuario
+                    Cookie cookie = Utils.buscarCookie("carrito",request.getCookies());
+                    if(cookie != null){
+                        cookie.setMaxAge(0);
+                        response.addCookie(cookie);
+                    }
                 }else{
-                    //Si no lo tiene, guardamos el carrito de la sesion en la BBDD
-                    pedido = (Pedido) sesion.getAttribute("carrito");
-                    pedido.setUsuario(usuario);
-                    pdao.addPedido(pedido);
+                    //Si no hay nada en la sesion, comprobamos si el usuario tiene un carrito en la BBDD
+                    Pedido pedido = pdao.getPedidoByUser(usuario);
+                    if(pedido != null){
+                        //Si lo tiene, cambiamos la sesion por el carrito de la BBDD
+                        sesion.setAttribute("carrito", pedido);
+                    }
                 }
-                //Haya algo en la BBDD o no, eliminamos la cookie al usuario
-                Cookie cookie = Utils.buscarCookie("carrito",request.getCookies());
-                if(cookie != null){
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
-                }
-            }else{
-                //Si no hay nada en la sesion, comprobamos si el usuario tiene un carrito en la BBDD
-                Pedido pedido = pdao.getPedidoByUser(usuario);
-                if(pedido != null){
-                    //Si lo tiene, cambiamos la sesion por el carrito de la BBDD
-                    sesion.setAttribute("carrito", pedido);
-                }
+                request.setAttribute("succes", "Has iniciado sesi&oacute;n correctamente");
             }
         }
 

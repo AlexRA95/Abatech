@@ -158,13 +158,12 @@
 <!-- Modal de inicio de sesión -->
 <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="${applicationScope.contexto}//RegistroLogin" method="post" class="modal-content">
-            <div class="modal-header">
+        <form action="${applicationScope.contexto}/RegistroLogin" method="post" class="modal-content">
+            <div class="modal-header bg-primary text-white">
                 <h1 class="modal-title fs-5" id="exampleModalLabelLog">Inicio de sesi&oacute;n</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p class="text-warning">${requestScope.error}</p>
                 <div class="form-floating mb-3">
                     <input type="email" name="email" class="form-control" id="floatingEmailLog"
                            placeholder="name@example.com">
