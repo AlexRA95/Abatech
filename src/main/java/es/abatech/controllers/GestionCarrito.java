@@ -27,7 +27,10 @@ public class GestionCarrito extends HttpServlet {
         //Recuperamos el carrito de la sesion
         Pedido pedido = (Pedido) session.getAttribute("carrito");
         //Recuperamos el valor de la linea de pedido que se almacena en un input type hidden
-        Short idProducto = Short.valueOf(request.getParameter("idProducto"));
+        Short idProducto = null;
+        if (request.getParameter("idProducto") != null){
+            idProducto = Short.valueOf(request.getParameter("idProducto"));
+        }
         Boolean logeado = session.getAttribute("usuario") != null;
         //Si el usuario está logeado, los cambios se guardarán tanto en la base de datos como en la sesión
         //Si el usuario no está logeado, los cambios se guardarán en la sesión y en la cookie
@@ -137,6 +140,30 @@ public class GestionCarrito extends HttpServlet {
                     // Pasamos el contenido del pedido a la cookie
                     Cookie cookie = new Cookie("carrito", URLEncoder.encode(Utils.pedidoToCookie(pedido), "UTF-8"));
                     cookie.setMaxAge(60 * 60 * 24 * 2); // Hacemos que la cookie dure 2 días
+                    response.addCookie(cookie);
+                }
+                break;
+            case "comprar":
+                //Si el usuario quiere comprar el pedido, cambiamos el estado del pedido de "c" a "f"
+                DAOFactory daof = DAOFactory.getDAOFactory();
+                IPedidoDAO pdao = daof.getPedidoDAO();
+                pdao.updatePedido(pedido);
+                //Ahora, borraos el pedido de la sesion
+                session.setAttribute("carrito", null);
+                break;
+            case "vaciar":
+                //Si el usuario está logeado, borramos las lineas de pedido de la base de datos y luego el pedido
+                //Si solo hay una linea de pedido, ponemos que el atributo de sesion sea null
+                session.setAttribute("carrito", null);
+                //Ahora, si esta logeado borramos las lineas de pedido de la base de datos y luego el pedido
+                if (logeado){
+                    daof = DAOFactory.getDAOFactory();
+                    pdao = daof.getPedidoDAO();
+                    pdao.deletePedido(pedido);
+                }else{
+                    //Ahora eliminamos la cookie
+                    Cookie cookie = Utils.buscarCookie("carrito",request.getCookies());
+                    cookie.setMaxAge(0);//Borramos la cookie
                     response.addCookie(cookie);
                 }
                 break;

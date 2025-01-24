@@ -14,6 +14,78 @@ import java.util.logging.Logger;
 public class PedidoDAO implements IPedidoDAO {
 
     @Override
+    public List<Pedido> getPedidosFinByUser(Usuario usuario) {
+        Connection conexion = null;
+        PreparedStatement preparada = null;
+        ResultSet resultado = null;
+        String sql = null;
+        List<Pedido> pedidos = new ArrayList<>();
+        Pedido pedidoActual = null;
+
+        try {
+            conexion = ConnectionFactory.getConnection();
+            sql = "SELECT p.*, l.*, pr.* FROM pedidos p " +
+                    "JOIN abatech.lineaspedidos l ON p.idPedido = l.idPedido " +
+                    "JOIN abatech.productos pr ON l.idProducto = pr.idProducto " +
+                    "WHERE p.idUsuario = ? AND p.estado = 'f'";
+            preparada = conexion.prepareStatement(sql);
+            preparada.setInt(1, usuario.getIdUsuario());
+            resultado = preparada.executeQuery();
+            while (resultado.next()) {
+                int idPedido = resultado.getInt("idPedido");
+                if (pedidoActual == null || pedidoActual.getIdPedido() != idPedido) {
+                    List<LineaPedido> lineas = new ArrayList<>();
+                    pedidoActual = new Pedido();
+                    pedidoActual.setIdPedido((short) idPedido);
+                    pedidoActual.setFecha(resultado.getDate("fecha"));
+                    pedidoActual.setEstado(Pedido.Estado.valueOf(resultado.getString("estado")));
+                    pedidoActual.setUsuario(usuario);
+                    pedidoActual.setImporte(resultado.getDouble("importe"));
+                    pedidoActual.setIva(resultado.getDouble("iva"));
+                    pedidoActual.setLineasPedido(lineas);
+                    pedidos.add(pedidoActual);
+                }
+                LineaPedido linea = new LineaPedido();
+                linea.setIdLinea((short) resultado.getInt("idLinea"));
+                linea.setCantidad((byte) resultado.getInt("cantidad"));
+                Producto producto = new Producto();
+                producto.setIdProducto((short) resultado.getInt("idProducto"));
+                producto.setNombre(resultado.getString("nombre"));
+                producto.setPrecio(resultado.getDouble("precio"));
+                producto.setImagen(resultado.getString("imagen"));
+                producto.setMarca(resultado.getString("marca"));
+                producto.setDescripcion(resultado.getString("descripcion"));
+                linea.setProducto(producto);
+                pedidoActual.getLineasPedido().add(linea);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            this.closeConnection();
+        }
+        return pedidos;
+    }
+
+    @Override
+    public void updatePedido(Pedido pedido) {
+        Connection conexion = null;
+        PreparedStatement preparada = null;
+        String sql = "UPDATE pedidos SET estado = ? WHERE idPedido = ?";
+
+        try {
+            conexion = ConnectionFactory.getConnection();
+            preparada = conexion.prepareStatement(sql);
+            preparada.setString(1, "f");
+            preparada.setShort(2, pedido.getIdPedido());
+            preparada.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            this.closeConnection();
+        }
+    }
+
+    @Override
     public Pedido getPedidoByUser(Usuario usuario) {
         Connection conexion = null;
         PreparedStatement preparada = null;
@@ -34,7 +106,6 @@ public class PedidoDAO implements IPedidoDAO {
             resultado = preparada.executeQuery();
             while (resultado.next()) {
                 if (pedido == null) {
-                    // Create the main pedido object
                     pedido = new Pedido();
                     pedido.setIdPedido((short) resultado.getInt("idPedido"));
                     pedido.setFecha(resultado.getDate("fecha"));
@@ -43,11 +114,10 @@ public class PedidoDAO implements IPedidoDAO {
                     pedido.setImporte(resultado.getDouble("importe"));
                     pedido.setIva(resultado.getDouble("iva"));
                 }
-                // Create a new LineaPedido object
                 linea = new LineaPedido();
                 linea.setIdLinea((short) resultado.getInt("idLinea"));
                 linea.setCantidad((byte) resultado.getInt("cantidad"));
-                // Create a new Producto object and set it to the LineaPedido
+
                 Producto producto = new Producto();
                 producto.setIdProducto((short) resultado.getInt("idProducto"));
                 producto.setNombre(resultado.getString("nombre"));
@@ -55,9 +125,7 @@ public class PedidoDAO implements IPedidoDAO {
                 producto.setImagen(resultado.getString("imagen"));
                 producto.setMarca(resultado.getString("marca"));
                 producto.setDescripcion(resultado.getString("descripcion"));
-                // Set the Producto to the LineaPedido
                 linea.setProducto(producto);
-                // Add the LineaPedido to the list
                 lineas.add(linea);
             }
             if (pedido != null) {
@@ -82,9 +150,8 @@ public class PedidoDAO implements IPedidoDAO {
 
         try {
             conexion = ConnectionFactory.getConnection();
-            conexion.setAutoCommit(false); // Start transaction
+            conexion.setAutoCommit(false);
 
-            // Insert the pedido
             preparada = conexion.prepareStatement(sqlPedido, PreparedStatement.RETURN_GENERATED_KEYS);
             preparada.setDate(1, new java.sql.Date(pedido.getFecha().getTime()));
             preparada.setString(2, pedido.getEstado().name());
@@ -93,22 +160,20 @@ public class PedidoDAO implements IPedidoDAO {
             preparada.setDouble(5, pedido.getIva());
             preparada.executeUpdate();
 
-            // Get the generated ID for the pedido
             generatedKeys = preparada.getGeneratedKeys();
             if (generatedKeys.next()) {
                 pedido.setIdPedido(generatedKeys.getShort(1));
             }
 
-            // Insert each lineaPedido using LineaPedidosDAO
             for (LineaPedido linea : pedido.getLineasPedido()) {
                 lineaPedidosDAO.addLineaPedido(linea, pedido.getIdPedido(), conexion);
             }
 
-            conexion.commit(); // Commit transaction
+            conexion.commit();
         } catch (SQLException e) {
             if (conexion != null) {
                 try {
-                    conexion.rollback(); // Rollback transaction on error
+                    conexion.rollback();
                 } catch (SQLException ex) {
                     Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, ex);
                 }

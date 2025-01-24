@@ -60,12 +60,25 @@
                     </tr>
                 </c:forEach>
                 <tr>
-                    <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                    <td colspan="5" class="text-end"><strong>Base imponible:</strong></td>
+                    <td class="text-end"><fmt:formatNumber value="${sessionScope.carrito.importe / 1.21}" type="currency" currencySymbol="€"/></td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-end"><strong>IVA (21%):</strong></td>
+                    <td class="text-end"><fmt:formatNumber value="${sessionScope.carrito.importe - (sessionScope.carrito.importe / 1.21)}" type="currency" currencySymbol="€"/></td>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-end"><strong>Total a pagar:</strong></td>
                     <td class="text-end"><fmt:formatNumber value="${sessionScope.carrito.importe}" type="currency" currencySymbol="€"/></td>
-                    <td></td>
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="row">
+            <form action="${applicationScope.contexto}/GestionCarrito" method="post">
+                <button type="submit" name="opcion" value="vaciar" class="btn btn-danger">Vaciar carrito</button>
+                <button type="submit" name="opcion" value="comprar" class="btn btn-success" <c:if test="${empty sessionScope.usuario}">disabled</c:if>>Comprar</button>
+            </form>
         </div>
     </div>
 </main>
