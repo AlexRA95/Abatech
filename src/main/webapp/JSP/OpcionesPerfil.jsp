@@ -35,10 +35,6 @@
                             <input type="text" class="form-control" id="apellidos" name="apellidos" value="${sessionScope.usuario.apellidos}">
                         </div>
                         <div class="mb-3">
-                            <label for="nif" class="form-label">NIF</label>
-                            <input type="text" class="form-control" id="nif" name="nif" value="${sessionScope.usuario.nif}">
-                        </div>
-                        <div class="mb-3">
                             <label for="telefono" class="form-label">Teléfono</label>
                             <input type="tel" class="form-control" id="telefono" name="telefono" value="${sessionScope.usuario.telefono}">
                         </div>
@@ -81,7 +77,7 @@
                             <label for="ConfNuevaContrasenia" class="form-label">Confirmar nueva contraseña</label>
                             <input type="password" class="form-control" id="ConfNuevaContrasenia" name="ConfNuevaContrasenia">
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Cambiar Contraseña</button>
+                        <button type="submit" class="btn btn-primary w-100" disabled>Cambiar Contraseña</button>
                     </form>
                 </div>
             </div>
@@ -94,7 +90,7 @@
                     <form action="${contexto}/CambiarAvatar" method="post" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="avatar" class="form-label">Avatar</label>
-                            <input type="file" class="form-control" id="avatar" name="avatar" required>
+                            <input type="file" class="form-control" id="avatar" name="avatar">
                             <img id="avatarPreview" src="#" alt="Vista previa del avatar" class="img-thumbnail mt-3" style="display: none; max-width: 100px; max-height: 100px;">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Cambiar Avatar</button>

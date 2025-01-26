@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Clase para gestionar la conexi&oacute;n a la base de datos utilizando un pool de conexiones.
+ */
 public class ConnectionFactory {
 
     /*

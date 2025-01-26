@@ -1,7 +1,9 @@
 package es.abatech.controllers;
 
+import es.abatech.DAO.IPedidoDAO;
 import es.abatech.DAO.IUsuariosDAO;
 import es.abatech.DAOFactory.DAOFactory;
+import es.abatech.beans.Pedido;
 import es.abatech.beans.Usuario;
 import es.abatech.models.Utils;
 
@@ -10,6 +12,9 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 
+/**
+ * Servlet para manejar el cambio de contrase&ntilde;a de un usuario.
+ */
 @WebServlet(name = "CambiarContrasenia", value = "/CambiarContrasenia")
 public class CambiarContrasenia extends HttpServlet {
     @Override
@@ -35,6 +40,12 @@ public class CambiarContrasenia extends HttpServlet {
             request.setAttribute("error", "La contraseña actual no coincide");
         }
 
+        if (sesion.getAttribute("carrito") == null){
+            DAOFactory factory = DAOFactory.getDAOFactory();
+            IPedidoDAO pedidoDAO = factory.getPedidoDAO();
+            Pedido carrito = pedidoDAO.getPedidoByUser((Usuario) sesion.getAttribute("usuario"));
+            sesion.setAttribute("carrito", carrito);
+        }
         request.getRequestDispatcher(URL).forward(request, response);
     }
 }

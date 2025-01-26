@@ -74,15 +74,50 @@ public class PedidoDAO implements IPedidoDAO {
 
         try {
             conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
             preparada = conexion.prepareStatement(sql);
             preparada.setString(1, "f");
             preparada.setShort(2, pedido.getIdPedido());
             preparada.executeUpdate();
+            conexion.commit();
         } catch (SQLException e) {
-            Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+
         } finally {
             this.closeConnection();
         }
+    }
+
+    @Override
+    public void updateImportePedido(Pedido pedido) {
+        Connection conexion = null;
+        PreparedStatement preparada = null;
+        String sql = "UPDATE pedidos SET importe = ?, iva = ? WHERE idPedido = ?";
+
+        try {
+            conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
+            preparada = conexion.prepareStatement(sql);
+            preparada.setDouble(1, pedido.getImporte());
+            preparada.setDouble(2, pedido.getIva());
+            preparada.setShort(3, pedido.getIdPedido());
+            preparada.executeUpdate();
+            conexion.commit();
+        } catch (SQLException e) {
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+
+        } finally {
+            this.closeConnection();
+        }
+
     }
 
     @Override
@@ -180,27 +215,7 @@ public class PedidoDAO implements IPedidoDAO {
             }
             Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
-            if (generatedKeys != null) {
-                try {
-                    generatedKeys.close();
-                } catch (SQLException e) {
-                    Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
-            if (preparada != null) {
-                try {
-                    preparada.close();
-                } catch (SQLException e) {
-                    Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
+            this.closeConnection();
         }
     }
 
@@ -212,11 +227,17 @@ public class PedidoDAO implements IPedidoDAO {
 
         try {
             conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
             preparada = conexion.prepareStatement(sql);
             preparada.setShort(1, pedido.getIdPedido());
             preparada.executeUpdate();
+            conexion.commit();
         } catch (SQLException e) {
-            Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, e);
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } finally {
             this.closeConnection();
         }

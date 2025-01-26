@@ -11,6 +11,9 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Servlet para manejar las opciones del usuario.
+ */
 @WebServlet(name = "OpcionesUser", value = "/OpcionesUser")
 public class OpcionesUser extends HttpServlet {
     @Override
@@ -21,6 +24,7 @@ public class OpcionesUser extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String URL = ".";
+        HttpSession sesion = request.getSession();
         switch (request.getParameter("opcion")){
             case "perfil":
                 URL="JSP/OpcionesPerfil.jsp";
@@ -36,6 +40,12 @@ public class OpcionesUser extends HttpServlet {
             case "carrito":
                 URL="JSP/Carrito.jsp";
                 break;
+        }
+        if (sesion.getAttribute("usuario") != null  && sesion.getAttribute("carrito") == null){
+            DAOFactory factory = DAOFactory.getDAOFactory();
+            IPedidoDAO pedidoDAO = factory.getPedidoDAO();
+            Pedido carrito = pedidoDAO.getPedidoByUser((Usuario) sesion.getAttribute("usuario"));
+            sesion.setAttribute("carrito", carrito);
         }
         request.getRequestDispatcher(URL).forward(request, response);
     }

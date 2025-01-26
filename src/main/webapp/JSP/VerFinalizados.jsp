@@ -32,7 +32,7 @@
                     <div class="card-header" id="heading${pedido.idPedido}">
                         <h2 class="mb-0">
                             <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${pedido.idPedido}" aria-expanded="true" aria-controls="collapse${pedido.idPedido}">
-                                Pedido ID: #${pedido.idPedido} - Fecha: <fmt:formatDate value="${pedido.fecha}" type="both" dateStyle="medium" timeStyle="medium"/>
+                                Pedido ID: #${pedido.idPedido} - Fecha: <fmt:formatDate value="${pedido.fecha}" type="date" dateStyle="long"/>
                             </button>
                         </h2>
                     </div>

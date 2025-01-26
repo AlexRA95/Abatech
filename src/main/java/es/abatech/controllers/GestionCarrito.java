@@ -13,6 +13,9 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.net.URLEncoder;
 
+/**
+ * Servlet para gestionar el carrito de compras.
+ */
 @WebServlet(name = "GestionCarrito", value = "/GestionCarrito")
 public class GestionCarrito extends HttpServlet {
     @Override
@@ -59,7 +62,9 @@ public class GestionCarrito extends HttpServlet {
                     if (logeado){
                         DAOFactory daof = DAOFactory.getDAOFactory();
                         ILineaPedidosDAO ldao = daof.getLineaPedidosDAO();
+                        IPedidoDAO pdao = daof.getPedidoDAO();
                         ldao.deleteLineaPedido(pedido,idProducto);
+                        pdao.updateImportePedido(pedido);
                     }else{
                         //Pasamos el contenido del pedido a la cookie
                         Cookie cookie = new Cookie("carrito", URLEncoder.encode(Utils.pedidoToCookie(pedido), "UTF-8"));
@@ -104,7 +109,9 @@ public class GestionCarrito extends HttpServlet {
                             if (logeado) {
                                 DAOFactory daof = DAOFactory.getDAOFactory();
                                 ILineaPedidosDAO ldao = daof.getLineaPedidosDAO();
+                                IPedidoDAO pdao = daof.getPedidoDAO();
                                 ldao.deleteLineaPedido(pedido, idProducto);
+                                pdao.updateImportePedido(pedido);
                             } else {
                                 // Pasamos el contenido del pedido a la cookie
                                 Cookie cookie = new Cookie("carrito", URLEncoder.encode(Utils.pedidoToCookie(pedido), "UTF-8"));
@@ -118,7 +125,9 @@ public class GestionCarrito extends HttpServlet {
                             if (logeado) {
                                 DAOFactory daof = DAOFactory.getDAOFactory();
                                 ILineaPedidosDAO ldao = daof.getLineaPedidosDAO();
+                                IPedidoDAO pdao = daof.getPedidoDAO();
                                 ldao.reduceLineaPedido(pedido, idProducto);
+                                pdao.updateImportePedido(pedido);
                             } else {
                                 // Pasamos el contenido del pedido a la cookie
                                 Cookie cookie = new Cookie("carrito", URLEncoder.encode(Utils.pedidoToCookie(pedido), "UTF-8"));
@@ -135,7 +144,9 @@ public class GestionCarrito extends HttpServlet {
                 if (logeado) {
                     DAOFactory daof = DAOFactory.getDAOFactory();
                     ILineaPedidosDAO ldao = daof.getLineaPedidosDAO();
+                    IPedidoDAO pdao = daof.getPedidoDAO();
                     ldao.aumentarLineaPedido(pedido, Integer.valueOf(idProducto));
+                    pdao.updateImportePedido(pedido);
                 } else {
                     // Pasamos el contenido del pedido a la cookie
                     Cookie cookie = new Cookie("carrito", URLEncoder.encode(Utils.pedidoToCookie(pedido), "UTF-8"));
@@ -168,6 +179,7 @@ public class GestionCarrito extends HttpServlet {
                     response.addCookie(cookie);
                     request.setAttribute("error", "Se han eliminado todos los productos del carrito");
                 }
+
                 break;
 
         }

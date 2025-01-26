@@ -9,12 +9,16 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Servlet para manejar las solicitudes de b&uacute;squeda de productos.
+ */
 @WebServlet(name = "Buscar", value = "/Buscar")
 public class Buscar extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher(".").forward(request, response);
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

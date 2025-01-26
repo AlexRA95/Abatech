@@ -13,18 +13,73 @@ import java.util.logging.Logger;
 public class UsuariosDAO implements IUsuariosDAO {
 
     @Override
+    public void updateUsuarioAvatar(Usuario usuario) {
+        Connection conexion = null;
+        PreparedStatement preparada = null;
+        String sql = "UPDATE usuarios SET avatar = ? WHERE idUsuario = ?";
+        try {
+            conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
+            preparada = conexion.prepareStatement(sql);
+            preparada.setString(1, usuario.getAvatar());
+            preparada.setInt(2, usuario.getIdUsuario());
+            preparada.executeUpdate();
+            conexion.commit();
+        } catch (SQLException e) {
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+        } finally {
+            this.closeConnection();
+        }
+    }
+
+    @Override
+    public Boolean correoEnUso(String email) {
+        Connection conexion = null;
+        PreparedStatement preparada = null;
+        ResultSet resultado = null;
+        String sql = null;
+        Boolean correoEnUso = false;
+
+        try {
+            conexion = ConnectionFactory.getConnection();
+            sql = "SELECT * FROM usuarios WHERE email = ?";
+            preparada = conexion.prepareStatement(sql);
+            preparada.setString(1, email);
+            resultado = preparada.executeQuery();
+            while (resultado.next()) {
+                correoEnUso = true;
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            this.closeConnection();
+        }
+        return correoEnUso;
+    }
+
+    @Override
     public void updateUsuarioContra(Usuario usuario) {
         Connection conexion = null;
         PreparedStatement preparada = null;
         String sql = "UPDATE usuarios SET password = ? WHERE idUsuario = ?";
         try {
             conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
             preparada = conexion.prepareStatement(sql);
             preparada.setString(1, usuario.getPassword());
             preparada.setInt(2, usuario.getIdUsuario());
             preparada.executeUpdate();
+            conexion.commit();
         } catch (SQLException e) {
-            Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, e);
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
         } finally {
             this.closeConnection();
         }
@@ -34,22 +89,27 @@ public class UsuariosDAO implements IUsuariosDAO {
     public void updateUsuarioGen(Usuario usuario) {
         Connection conexion = null;
         PreparedStatement preparada = null;
-        String sql = "UPDATE usuarios SET nombre = ?, apellidos = ?, NIF = ?, telefono = ?, direccion = ?, codigoPostal = ?, localidad = ?, provincia = ? WHERE idUsuario = ?";
+        String sql = "UPDATE usuarios SET nombre = ?, apellidos = ?, telefono = ?, direccion = ?, codigoPostal = ?, localidad = ?, provincia = ? WHERE idUsuario = ?";
         try {
             conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
             preparada = conexion.prepareStatement(sql);
             preparada.setString(1, usuario.getNombre());
             preparada.setString(2, usuario.getApellidos());
-            preparada.setString(3, usuario.getNif());
-            preparada.setInt(4, usuario.getTelefono());
-            preparada.setString(5, usuario.getDireccion());
-            preparada.setShort(6, usuario.getCodigoPostal());
-            preparada.setString(7, usuario.getLocalidad());
-            preparada.setString(8, usuario.getProvincia());
-            preparada.setShort(9, usuario.getIdUsuario());
+            preparada.setInt(3, usuario.getTelefono());
+            preparada.setString(4, usuario.getDireccion());
+            preparada.setShort(5, usuario.getCodigoPostal());
+            preparada.setString(6, usuario.getLocalidad());
+            preparada.setString(7, usuario.getProvincia());
+            preparada.setShort(8, usuario.getIdUsuario());
             preparada.executeUpdate();
+            conexion.commit();
         } catch (SQLException e) {
-            Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, e);
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
         } finally {
             this.closeConnection();
         }
@@ -101,12 +161,18 @@ public class UsuariosDAO implements IUsuariosDAO {
         String sql = "UPDATE usuarios SET ultimoAcceso = ? WHERE idUsuario = ?";
         try {
             conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
             preparada = conexion.prepareStatement(sql);
             preparada.setTimestamp(1, ultimaConexion);
             preparada.setInt(2, idUsuario);
             preparada.executeUpdate();
+            conexion.commit();
         } catch (SQLException e) {
-            Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, e);
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuariosDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } finally {
             this.closeConnection();
         }

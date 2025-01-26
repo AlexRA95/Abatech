@@ -15,7 +15,9 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Date;
-
+/**
+ * Servlet para manejar el carrito de compras.
+ */
 @WebServlet(name = "Carrito", value = "/Carrito")
 public class Carrito extends HttpServlet {
     @Override
@@ -66,7 +68,7 @@ public class Carrito extends HttpServlet {
                     //Si el producto no estaba en el carrito, lo añadimos
                     lpdao.addLineaPedido(pedido.getLineasPedido().get(pedido.getLineasPedido().size()-1), pedido.getIdPedido());
                 }
-
+                pedao.updateImportePedido(pedido);
             }
         }
 

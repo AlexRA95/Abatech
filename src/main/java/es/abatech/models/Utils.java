@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Clase de utilidades que proporciona varios métodos auxiliares para la aplicación.
+ * Clase de utilidades que proporciona varios m&eacute;todos auxiliares para la aplicaci&oacute;n.
  */
 public class Utils {
 
@@ -64,8 +64,8 @@ public class Utils {
     /**
      * Añade un producto a un pedido dado. Si el producto ya existe en el pedido, su cantidad se incrementa.
      *
-     * @param producto el producto a añadir
-     * @param pedido el pedido al que se añade el producto
+     * @param producto el producto a a&ntilde;adir
+     * @param pedido el pedido al que se a&ntilde;ade el producto
      */
     public static Boolean addProductoToPedido(Producto producto, Pedido pedido) {
         List<LineaPedido> lineasPedido = pedido.getLineasPedido();
@@ -92,7 +92,7 @@ public class Utils {
     }
 
     /**
-     * Actualiza el importe total de un pedido dado basado en sus líneas de pedido y sus cantidades.
+     * Actualiza el importe total de un pedido dado basado en sus l&iacute;neas de pedido y sus cantidades.
      *
      * @param pedido el pedido a actualizar
      */
@@ -101,16 +101,16 @@ public class Utils {
         for (LineaPedido lineaPedido : pedido.getLineasPedido()) {
             importe += lineaPedido.getProducto().getPrecio() * lineaPedido.getCantidad();
         }
-        pedido.setIva(1.21);
-        importe *= pedido.getIva();
+        pedido.setIva(21.0);
+        importe *=  (pedido.getIva()/100)+1 ;
         pedido.setImporte(importe);
     }
 
     /**
-     * Convierte un pedido a una representación en cadena adecuada para almacenar en una cookie.
+     * Convierte un pedido a una representaci&oacute;n en cadena adecuada para almacenar en una cookie.
      *
      * @param pedido el pedido a convertir
-     * @return la representación en cadena del pedido
+     * @return la representaci&oacute;n en cadena del pedido
      */
     public static String pedidoToCookie(Pedido pedido) {
         StringBuilder mensaje = new StringBuilder();
@@ -122,7 +122,7 @@ public class Utils {
     }
 
     /**
-     * Convierte una representación en cadena de una cookie de vuelta a un pedido.
+     * Convierte una representaci&oacute;n en cadena de una cookie de vuelta a un pedido.
      *
      * @param cookie la cadena de la cookie a convertir
      * @param pedido el pedido a poblar
@@ -149,22 +149,28 @@ public class Utils {
         pedido.setLineasPedido(lineasPedido);
         updateImportePedido(pedido);
         pedido.setEstado(Pedido.Estado.c);
-        pedido.setIva(0.21);
+        pedido.setIva(21.0);
         pedido.setFecha(new Date());
         return pedido;
     }
 
     /**
-     * Verifica si dos contraseñas son iguales después de hashear la nueva contraseña con MD5.
+     * Verifica si dos contrase&ntilde;as son iguales despu&eacute;s de hashear la nueva contraseña con MD5.
      *
-     * @param contraActu la contraseña actual
-     * @param contraNueva la nueva contraseña a comparar
-     * @return true si las contraseñas son iguales, false de lo contrario
+     * @param contraActu la contrase&ntilde;a actual
+     * @param contraNueva la nueva contrase&ntilde;a a comparar
+     * @return true si las contrase&ntilde;as son iguales, false de lo contrario
      */
     public static boolean contrasIguales(String contraActu, String contraNueva) {
         return contraActu.equals(md5(contraNueva));
     }
 
+    /**
+     * Resta la cantidad de un producto en un pedido dado.
+     *
+     * @param idProducto el ID del producto a restar
+     * @param pedido el pedido en el que se resta el producto
+     */
     public static void restarCantidadProducto(Short idProducto, Pedido pedido){
         List<LineaPedido> lineasPedido = pedido.getLineasPedido();
         for (LineaPedido lineaPedido : lineasPedido) {
@@ -181,6 +187,12 @@ public class Utils {
         updateImportePedido(pedido);
     }
 
+    /**
+     * Aumenta la cantidad de un producto en un pedido dado.
+     *
+     * @param idProducto el ID del producto a aumentar
+     * @param pedido el pedido en el que se aumenta el producto
+     */
     public static void aumentarCantidadProducto(Short idProducto, Pedido pedido){
         List<LineaPedido> lineasPedido = pedido.getLineasPedido();
         for (LineaPedido lineaPedido : lineasPedido) {
@@ -193,6 +205,12 @@ public class Utils {
         updateImportePedido(pedido);
     }
 
+    /**
+     * Borra una línea de pedido de un pedido dado.
+     *
+     * @param idProducto el ID del producto a borrar
+     * @param pedido el pedido del que se borra la línea de pedido
+     */
     public static void borrarLineaPedido(short idProducto, Pedido pedido) {
         List<LineaPedido> lineasPedido = pedido.getLineasPedido();
         for (LineaPedido lineaPedido : lineasPedido) {
@@ -205,7 +223,13 @@ public class Utils {
         updateImportePedido(pedido);
     }
 
-    private char calcularLetraNIF(String nif) {
+    /**
+     * Calcula la letra del NIF a partir del n&uacute;mero proporcionado.
+     *
+     * @param nif el n&uacute;mero del NIF
+     * @return la letra correspondiente al NIF
+     */
+    public static char calcularLetraNIF(String nif) {
         String letters = "TRWAGMYFPDXBNJZSQVHLCKE";
         int number = Integer.parseInt(nif);
         return letters.charAt(number % 23);

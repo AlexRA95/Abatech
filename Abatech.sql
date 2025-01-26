@@ -168,7 +168,9 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'juan.perez@gmail.com','25d55ad283aa400af464c76d713c07ad','Juan','Pérez','12345678A','600123456','Calle Mayor 10','28001','Madrid','Madrid','2025-01-22 10:00:00','default.png'),(2,'ana.lopez@gmail.com','25d55ad283aa400af464c76d713c07ad','Ana','López','87654321B','610654321','Avenida Sol 20','08002','Barcelona','Barcelona','2025-01-21 15:30:00','default.png'),(3,'carlos.garcia@gmail.com','25d55ad283aa400af464c76d713c07ad','Carlos','García','45678912C','620987654','Calle Luna 30','41003','Sevilla','Sevilla','2025-01-20 18:00:00','default.png');
+INSERT INTO `usuarios` VALUES (1,'juan.perez@gmail.com','25d55ad283aa400af464c76d713c07ad','Juan','Pérez','12345678A','600123456','Calle Mayor 10','28001','Madrid','Madrid','2025-01-22 10:00:00','default.png'),
+                              (2,'ana.lopez@gmail.com','25d55ad283aa400af464c76d713c07ad','Ana','López','87654321B','610654321','Avenida Sol 20','08002','Barcelona','Barcelona','2025-01-21 15:30:00','default.png'),
+                              (3,'carlos.garcia@gmail.com','25d55ad283aa400af464c76d713c07ad','Carlos','García','45678912C','620987654','Calle Luna 30','41003','Sevilla','Sevilla','2025-01-20 18:00:00','default.png');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 

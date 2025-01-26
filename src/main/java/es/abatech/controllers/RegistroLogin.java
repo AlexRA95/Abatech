@@ -16,6 +16,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.Map;
 
+/**
+ * Servlet para manejar el registro y el inicio de sesi&oacute;n de los usuarios.
+ */
 @WebServlet(name = "RegistroLogin", value = "/RegistroLogin")
 public class RegistroLogin extends HttpServlet {
     @Override

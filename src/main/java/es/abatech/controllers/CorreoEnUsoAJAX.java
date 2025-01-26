@@ -1,5 +1,7 @@
 package es.abatech.controllers;
-import es.abatech.models.Utils;
+
+import es.abatech.DAO.IUsuariosDAO;
+import es.abatech.DAOFactory.DAOFactory;
 import org.json.JSONObject;
 
 import javax.servlet.*;
@@ -9,10 +11,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 /**
- * Servlet para calcular la letra del NIF utilizando AJAX.
+ * Servlet para verificar si un correo electr&oacute;nico ya est&aacute; en uso utilizando AJAX.
  */
-@WebServlet(name = "CalcularLetraNIF_AJAX", value = "/CalcularLetraNIF_AJAX")
-public class CalcularLetraNIF_AJAX extends HttpServlet {
+@WebServlet(name = "CorreoEnUsoAJAX", value = "/CorreoEnUsoAJAX")
+public class CorreoEnUsoAJAX extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher(".").forward(request, response);
@@ -30,12 +32,14 @@ public class CalcularLetraNIF_AJAX extends HttpServlet {
         }
 
         JSONObject jsonRequest = new JSONObject(requestBody.toString());
-        String nif = jsonRequest.getString("NIF");
+        String email = jsonRequest.getString("EMAIL");
 
-        Character letra = Utils.calcularLetraNIF(nif);
+        DAOFactory daof = DAOFactory.getDAOFactory();
+        IUsuariosDAO udao = daof.getUsuariosDAO();
+        Boolean correoEnUso = udao.correoEnUso(email);
 
         JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("Letra", letra);
+        jsonResponse.put("correoEnUso", correoEnUso);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

@@ -25,7 +25,6 @@ public class LineaPedidosDAO implements ILineaPedidosDAO {
             preparada.setByte(3, linea.getCantidad());
             preparada.executeUpdate();
 
-            // Get the generated ID for the lineaPedido
             generatedKeys = preparada.getGeneratedKeys();
             if (generatedKeys.next()) {
                 linea.setIdLinea(generatedKeys.getShort(1));
@@ -33,7 +32,6 @@ public class LineaPedidosDAO implements ILineaPedidosDAO {
         } catch (SQLException e) {
             Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
         } finally {
-            // Close resources except for the connection
             if (generatedKeys != null) {
                 try {
                     generatedKeys.close();
@@ -59,27 +57,20 @@ public class LineaPedidosDAO implements ILineaPedidosDAO {
 
         try {
             conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
             preparada = conexion.prepareStatement(sql);
             preparada.setShort(1, pedido.getIdPedido());
             preparada.setInt(2, idProducto);
             preparada.executeUpdate();
+            conexion.commit();
         } catch (SQLException e) {
-            Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } finally {
-            if (preparada != null) {
-                try {
-                    preparada.close();
-                } catch (SQLException e) {
-                    Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
+            this.closeConnection();
         }
     }
 
@@ -91,27 +82,20 @@ public class LineaPedidosDAO implements ILineaPedidosDAO {
 
         try {
             conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
             preparada = conexion.prepareStatement(sql);
             preparada.setShort(1, pedido.getIdPedido());
             preparada.setShort(2, idProducto);
             preparada.executeUpdate();
+            conexion.commit();
         } catch (SQLException e) {
-            Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } finally {
-            if (preparada != null) {
-                try {
-                    preparada.close();
-                } catch (SQLException e) {
-                    Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
-            if (conexion != null) {
-                try {
-                    conexion.close();
-                } catch (SQLException e) {
-                    Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
-                }
-            }
+            this.closeConnection();
         }
     }
 
@@ -130,20 +114,20 @@ public class LineaPedidosDAO implements ILineaPedidosDAO {
 
         try {
             conexion = ConnectionFactory.getConnection();
+            conexion.setAutoCommit(false);
             preparada = conexion.prepareStatement(sql);
             preparada.setShort(1, pedido.getIdPedido());
             preparada.setShort(2, idProducto);
             preparada.executeUpdate();
+            conexion.commit();
         } catch (SQLException e) {
-            Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
-        } finally {
-            if (preparada != null) {
-                try {
-                    preparada.close();
-                } catch (SQLException e) {
-                    Logger.getLogger(LineaPedidosDAO.class.getName()).log(Level.SEVERE, null, e);
-                }
+            try {
+                conexion.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(PedidoDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } finally {
+            this.closeConnection();
         }
     }
 

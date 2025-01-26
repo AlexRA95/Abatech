@@ -1,10 +1,12 @@
 package es.abatech.controllers;
 
+import es.abatech.DAO.IPedidoDAO;
 import es.abatech.DAO.IProductosDAO;
 import es.abatech.DAO.ProductosDAO;
 import es.abatech.DAOFactory.DAOFactory;
 import es.abatech.beans.Pedido;
 import es.abatech.beans.Producto;
+import es.abatech.beans.Usuario;
 import es.abatech.models.Utils;
 
 import javax.servlet.*;
@@ -14,7 +16,9 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Servlet para manejar la p&aacute;gina principal y la gesti&oacute;n del carrito de compras.
+ */
 @WebServlet(name = "Frontcontroller", value = "/Frontcontroller")
 public class Frontcontroller extends HttpServlet {
     @Override
@@ -54,6 +58,13 @@ public class Frontcontroller extends HttpServlet {
         List<Producto> productos = new ArrayList<>();
         productos = pdao.get8productosRand();
         request.setAttribute("productos", productos);
+
+        if (session.getAttribute("usuario") != null  && session.getAttribute("carrito") == null){
+            DAOFactory factory = DAOFactory.getDAOFactory();
+            IPedidoDAO pedidoDAO = factory.getPedidoDAO();
+            Pedido carrito = pedidoDAO.getPedidoByUser((Usuario) session.getAttribute("usuario"));
+            session.setAttribute("carrito", carrito);
+        }
 
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }

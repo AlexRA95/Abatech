@@ -20,45 +20,95 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
 
-        function validarInput(input) {
+        async function validarInput(input) {
             const value = input.value;
             const id = input.id;
             let todoBien = true;
+            let mensaje = '';
 
             switch (id) {
                 case 'floatingEmail':
                     todoBien = validarEmail(value);
+                    if (todoBien) {
+                        const data = await correoEnUso();
+                        todoBien = !data.correoEnUso;
+                        if (!todoBien) {
+                            mensaje = 'El correo electrónico ya está en uso.';
+                        }
+                    } else {
+                        mensaje = 'El correo electrónico no es válido.';
+                    }
                     break;
                 case 'floatingPassword':
                     todoBien = value.length >= 8 && value.length <= 100;
+                    if (!todoBien) {
+                        mensaje = 'La contraseña debe tener entre 8 y 100 caracteres.';
+                    }
                     break;
                 case 'floatingPasswordConf':
                     const password = document.querySelector('#floatingPassword').value;
                     todoBien = value === password;
+                    if (!todoBien) {
+                        mensaje = 'Las contraseñas no coinciden.';
+                    }
                     break;
                 case 'floatingName':
                     todoBien = value.length > 0 && value.length <= 20;
+                    if (!todoBien) {
+                        mensaje = 'El nombre no puede estar vacío y debe tener menos de 20 caracteres.';
+                    }
                     break;
                 case 'floatingSurname':
                     todoBien = value.length > 0 && value.length <= 30;
+                    if (!todoBien) {
+                        mensaje = 'Los apellidos no pueden estar vacíos y deben tener menos de 30 caracteres.';
+                    }
                     break;
                 case 'floatingNIF':
-                    todoBien = /^[0-9]{8}$/.test(value);
+                    if (/^[0-9]{8}$/.test(value)) {
+                        const data = await calcularLetraNIF(document.getElementById('floatingNIF').value);
+                        if (data !== null) {
+                            document.getElementById('floatingNIF').value += data.Letra;
+                            todoBien = /^[0-9]{8}[A-Z]$/.test(document.getElementById('floatingNIF').value);
+                        } else {
+                            todoBien = false;
+                        }
+                    } else {
+                        todoBien = false;
+                    }
+                    if (!todoBien) {
+                        mensaje = 'El NIF no es válido.';
+                    }
                     break;
                 case 'floatingPhone':
                     todoBien = !value || /^[0-9]{9}$/.test(value);
+                    if (!todoBien) {
+                        mensaje = 'El número de teléfono no es válido.';
+                    }
                     break;
                 case 'floatingDireccion':
                     todoBien = value.length > 0 && value.length <= 40;
+                    if (!todoBien) {
+                        mensaje = 'La dirección no puede estar vacía y debe tener menos de 40 caracteres.';
+                    }
                     break;
                 case 'floatingcdPostal':
                     todoBien = /^(0[1-9][0-9]{3}|[1-4][0-9]{4}|5[0-2][0-9]{3})$/.test(value);
+                    if (!todoBien) {
+                        mensaje = 'El código postal no es válido.';
+                    }
                     break;
                 case 'floatingLocalidad':
                     todoBien = value.length > 0 && value.length <= 40;
+                    if (!todoBien) {
+                        mensaje = 'La localidad no puede estar vacía y debe tener menos de 40 caracteres.';
+                    }
                     break;
                 case 'floatingProvincia':
                     todoBien = value.length > 0 && value.length <= 30;
+                    if (!todoBien) {
+                        mensaje = 'La provincia no puede estar vacía y debe tener menos de 30 caracteres.';
+                    }
                     break;
             }
 
@@ -68,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 input.classList.remove('is-valid');
                 input.classList.add('is-invalid');
-                showAlert(mensajeError(id));
+                showAlert(mensaje);
             }
         }
 
@@ -77,12 +127,22 @@ document.addEventListener('DOMContentLoaded', function () {
             submitButton.disabled = !allValid;
         }
 
-        function showAlert(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de validación',
-                text: message,
-            });
+        function showAlert(message, type = 'danger') {
+            const alertContainer = document.createElement('div');
+            alertContainer.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+            alertContainer.role = 'alert';
+            alertContainer.style.zIndex = '1050';
+            alertContainer.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+            document.body.appendChild(alertContainer);
+
+            setTimeout(() => {
+                alertContainer.classList.remove('show');
+                alertContainer.classList.add('fade');
+                setTimeout(() => alertContainer.remove(), 500);
+            }, 3000);
         }
 
         function validarEmail(email) {
@@ -90,34 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return re.test(email);
         }
 
-        function mensajeError(id) {
-            switch (id) {
-                case 'floatingEmail':
-                    return 'El correo electrónico no es válido.';
-                case 'floatingPassword':
-                    return 'La contraseña debe tener entre 8 y 100 caracteres.';
-                case 'floatingPasswordConf':
-                    return 'Las contraseñas no coinciden.';
-                case 'floatingName':
-                    return 'El nombre no puede estar vacío y debe tener menos de 20 caracteres.';
-                case 'floatingSurname':
-                    return 'Los apellidos no pueden estar vacíos y deben tener menos de 30 caracteres.';
-                case 'floatingNIF':
-                    return 'El NIF no es válido.';
-                case 'floatingPhone':
-                    return 'El número de teléfono no es válido.';
-                case 'floatingDireccion':
-                    return 'La dirección no puede estar vacía y debe tener menos de 40 caracteres.';
-                case 'floatingcdPostal':
-                    return 'El código postal no es válido.';
-                case 'floatingLocalidad':
-                    return 'La localidad no puede estar vacía y debe tener menos de 40 caracteres.';
-                case 'floatingProvincia':
-                    return 'La provincia no puede estar vacía y debe tener menos de 30 caracteres.';
-                default:
-                    return 'Este campo no es válido.';
-            }
-        }
+
     })();
 
     // Validación del formulario de cambio de datos generales
@@ -141,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        function validarInput(input) {
+        async function validarInput(input) {
             const value = input.value;
             const id = input.id;
             let todoBien = true;
@@ -152,9 +185,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     break;
                 case 'apellidos':
                     todoBien = value.length > 0 && value.length <= 30;
-                    break;
-                case 'nif':
-                    todoBien = /^[0-9]{8}$/.test(value);
                     break;
                 case 'telefono':
                     todoBien = !value || /^[0-9]{9}$/.test(value);
@@ -183,12 +213,22 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        function showAlert(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de validación',
-                text: message,
-            });
+        function showAlert(message, type = 'danger') {
+            const alertContainer = document.createElement('div');
+            alertContainer.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+            alertContainer.role = 'alert';
+            alertContainer.style.zIndex = '1050';
+            alertContainer.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+            document.body.appendChild(alertContainer);
+
+            setTimeout(() => {
+                alertContainer.classList.remove('show');
+                alertContainer.classList.add('fade');
+                setTimeout(() => alertContainer.remove(), 500);
+            }, 3000);
         }
 
         function mensajeError(id) {
@@ -216,80 +256,76 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 
     //Validacion de contraseñas
-    const button = document.querySelector('button[type="submit"][formaction$="CambiarContrasenia"]');
-    if (button) {
-        button.addEventListener('click', function (event) {
-            validatePasswordForm();
-        });
-    }
-
-    function validatePasswordForm() {
+    (function validatePasswordForm() {
         const form = document.querySelector('form[action$="CambiarContrasenia"]');
         if (!form) return;
-        const inputs = form.querySelectorAll('input');
+        const currentPasswordInput = form.querySelector('#contraseniaActual');
+        const newPasswordInput = form.querySelector('#nuevaContrasenia');
+        const confirmPasswordInput = form.querySelector('#ConfNuevaContrasenia');
         const submitButton = form.querySelector('button[type="submit"]');
 
-        inputs.forEach(input => {
-            input.addEventListener('blur', function () {
-                validarInput(input);
-                checkFormulario();
-            });
-        });
+        function validatePasswords() {
+            const currentPassword = currentPasswordInput.value;
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
 
-        function validarInput(input) {
-            const value = input.value;
-            const id = input.id;
-            let todoBien = true;
+            let allValid = true;
 
-            switch (id) {
-                case 'contraseniaActual':
-                    todoBien = value.length > 0;
-                    break;
-                case 'nuevaContrasenia':
-                    todoBien = value.length >= 8 && value.length <= 100;
-                    break;
-                case 'ConfNuevaContrasenia':
-                    const newPassword = document.querySelector('#nuevaContrasenia').value;
-                    todoBien = value === newPassword;
-                    break;
-            }
-
-            if (todoBien) {
-                input.classList.remove('is-invalid');
-                input.classList.add('is-valid');
+            if (currentPassword.length <= 7) {
+                currentPasswordInput.classList.remove('is-valid');
+                currentPasswordInput.classList.add('is-invalid');
+                showAlert('La contraseña actual debe tener más de 8 caracteres.');
+                allValid = false;
             } else {
-                input.classList.remove('is-valid');
-                input.classList.add('is-invalid');
-                showAlert(mensajeError(id));
+                currentPasswordInput.classList.remove('is-invalid');
+                currentPasswordInput.classList.add('is-valid');
             }
-        }
 
-        function checkFormulario() {
-            const allValid = Array.from(inputs).every(input => input.classList.contains('is-valid'));
+            if (newPassword.length <= 7) {
+                newPasswordInput.classList.remove('is-valid');
+                newPasswordInput.classList.add('is-invalid');
+                showAlert('La nueva contraseña debe tener más de 8 caracteres.');
+                allValid = false;
+            } else {
+                newPasswordInput.classList.remove('is-invalid');
+                newPasswordInput.classList.add('is-valid');
+            }
+
+            if (confirmPassword !== newPassword) {
+                confirmPasswordInput.classList.remove('is-valid');
+                confirmPasswordInput.classList.add('is-invalid');
+                showAlert('Las contraseñas no coinciden.');
+                allValid = false;
+            } else {
+                confirmPasswordInput.classList.remove('is-invalid');
+                confirmPasswordInput.classList.add('is-valid');
+            }
+
             submitButton.disabled = !allValid;
         }
 
-        function showAlert(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de validación',
-                text: message,
-            });
-        }
+        currentPasswordInput.addEventListener('blur', validatePasswords);
+        newPasswordInput.addEventListener('blur', validatePasswords);
+        confirmPasswordInput.addEventListener('blur', validatePasswords);
 
-        function mensajeError(id) {
-            switch (id) {
-                case 'contraseniaActual':
-                    return 'La contraseña actual no puede estar vacía.';
-                case 'nuevaContrasenia':
-                    return 'La nueva contraseña debe tener entre 8 y 100 caracteres.';
-                case 'ConfNuevaContrasenia':
-                    return 'Las contraseñas no coinciden.';
-                default:
-                    return 'Este campo no es válido.';
-            }
+        function showAlert(message, type = 'danger') {
+            const alertContainer = document.createElement('div');
+            alertContainer.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+            alertContainer.role = 'alert';
+            alertContainer.style.zIndex = '1050';
+            alertContainer.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+            document.body.appendChild(alertContainer);
+
+            setTimeout(() => {
+                alertContainer.classList.remove('show');
+                alertContainer.classList.add('fade');
+                setTimeout(() => alertContainer.remove(), 500);
+            }, 3000);
         }
-    }
+    })();
 });
 
 if (document.getElementById('precio') != null){
@@ -301,9 +337,9 @@ if (document.getElementById('precio') != null){
 }
 
 //Función para generar la letra del NIF y mostrarla en el campo correspondiente
-async function calcularLetraNIF() {
-    const URL = "Abatech/CalcularLetraNIF_AJAX";
-    const nif = document.getElementById("floatingNIF").value;
+async function calcularLetraNIF(nif) {
+    const URL = "CalcularLetraNIF_AJAX";
+
         const myHeaders = {
             "Content-Type": "application/x-www-form-urlencoded",
         };
@@ -320,10 +356,38 @@ async function calcularLetraNIF() {
                 throw new Error('Error en la solicitud: ' + response.statusText);
             }
             const data = await response.json();
-            console.log(data);
+            return data;
 
 
         } catch (error) {
             console.error('Error al obtener el mensaje del servidor:', error);
         }
+}
+
+//Función para comprobar si el correo electronico que el usuario quiere usar ya está en uso
+async function correoEnUso() {
+    const URL = "CorreoEnUsoAJAX";
+    const email = document.getElementById("floatingEmail").value;
+    const myHeaders = {
+        "Content-Type": "application/x-www-form-urlencoded",
+    };
+
+    try {
+        const response = await fetch(URL, {
+            method: "POST",
+            body: JSON.stringify({
+                EMAIL: email
+            }),
+            headers: myHeaders,
+        });
+        if (!response.ok) {
+            throw new Error('Error en la solicitud: ' + response.statusText);
+        }
+        const data = await response.json();
+        return data;
+
+
+    } catch (error) {
+        console.error('Error al obtener el mensaje del servidor:', error);
+    }
 }

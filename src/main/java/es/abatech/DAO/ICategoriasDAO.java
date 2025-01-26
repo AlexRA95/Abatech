@@ -4,6 +4,9 @@ import es.abatech.beans.Categoria;
 
 import java.util.List;
 
+/**
+ * Interfaz para las operaciones de acceso a datos relacionadas con las categor&iacute;as.
+ */
 public interface ICategoriasDAO {
 
     /**
@@ -14,7 +17,7 @@ public interface ICategoriasDAO {
     public List<Categoria> getCategorias();
 
     /**
-     * Cierra la conexión con la base de datos.
+     * Cierra la conexi&oacute;n con la base de datos.
      */
     public void closeConnection();
 }
